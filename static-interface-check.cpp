@@ -30,8 +30,9 @@ public:
 template <class T>
 class CanBark
 {
-public:
-	~CanBark()
+private:
+	static void
+	test()
 	{
 		T::bark();
 	}

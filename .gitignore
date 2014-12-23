@@ -3,3 +3,6 @@
 
 # g++/clang++ output
 a.out
+
+# Object Files
+*.o

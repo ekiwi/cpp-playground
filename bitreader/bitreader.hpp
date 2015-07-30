@@ -24,32 +24,52 @@
 
 struct BitSlice
 {
-	uint8_t* data;
-	uint8_t bit_offset;
-	uint32_t bit_length;
+	template<size_t N>
+	BitSlice(const uint8_t(&data)[N]) : data(data), bitOffset(0), bitLength(8*N){}
+
+	const uint8_t* data;
+	uint8_t bitOffset;
+	uint32_t bitLength;
 };
 
 
 
 
-template<int Bits>
+template<typename OutType, uint8_t Bits>
 class Bitreader
 {
 public:
-	using OutType = uint32_t;
 
 	/// This reads Bits bits from the beginning of the BitSlice and updates the
 	/// bitslice accordingly.
+	/// This means that bits are read in network order!
 	/// returns false if there are not enough bits in the slice to be read
-	bool read(BitSlice& input, OutType& result) {
-		if(input.bit_length < Bits) {
+	static bool read(BitSlice& slice, OutType& result) {
+		if(slice.bitLength < Bits) {
 			return false;
 		}
+		// read data
+// TODO
+//		result = 0;
+//		uint8_t offset = 0;
+//		while(offset < Bits) {
+//			result |= 
+//			uint8_t data =
+//		}
+
+		// update slice
+		slice.bitLength -= Bits;
+		slice.bitOffset += Bits;
+		slice.data += (slice.bitOffset / 8);
+		slice.bitOffset = slice.bitOffset % 8;
+		return true;
 	}
 
 
 
 private:
+	static constexpr uint32_t Mask = (1<<Bits)-1;
+
 	// TODO: deduce max number of bits based on OutType
 	static_assert(Bits <= 32, "Error: can only read a maximum of 32 bits at once");
 };

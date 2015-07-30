@@ -23,8 +23,32 @@
 #include "../bitreader.hpp"
 
 void
+BitreaderTest::testBitSlice()
+{
+	const uint8_t data[2] = {0b00111010, 0b11111111};
+	BitSlice slice(data);
+	TEST_ASSERT_EQUALS(slice.data, data);
+	TEST_ASSERT_EQUALS(slice.bitOffset, 0);
+	TEST_ASSERT_EQUALS(slice.bitLength, 16);
+}
+
+void
 BitreaderTest::testLeftAligned()
 {
-	TEST_ASSERT_EQUALS(2 + 2, 4);
-	TEST_ASSERT_EQUALS(2 + 2, 5);
+	const uint8_t data[2] = {0b00111010, 0b11111111};
+	BitSlice slice(data);
+	uint8_t result;
+	int8_t iresult;
+
+	TEST_ASSERT_TRUE((Bitreader<uint8_t, 4>::read(slice, result)));
+	TEST_ASSERT_EQUALS(result, 0b0011);
+	TEST_ASSERT_TRUE((Bitreader<uint8_t, 3>::read(slice, result)));
+	TEST_ASSERT_EQUALS(result, 0b101);
+	TEST_ASSERT_TRUE((Bitreader<uint8_t, 2>::read(slice, result)));
+	TEST_ASSERT_EQUALS(result, 0b01);
+	TEST_ASSERT_TRUE((Bitreader<uint8_t, 5>::read(slice, result)));
+	TEST_ASSERT_EQUALS(result, 0b11111);
+	TEST_ASSERT_FALSE((Bitreader<uint8_t, 5>::read(slice, result)));
+	TEST_ASSERT_TRUE((Bitreader<int8_t, 2>::read(slice, iresult)));
+	TEST_ASSERT_EQUALS(iresult, -1);
 }

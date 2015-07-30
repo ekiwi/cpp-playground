@@ -24,6 +24,7 @@
 class BitreaderTest : public unittest::TestSuite
 {
 public:
-	void
-	testLeftAligned();
+	void testBitSlice();
+
+	void testLeftAligned();
 };

@@ -3,6 +3,11 @@
 
 # g++/clang++ output
 a.out
+*.gch
 
 # Object Files
 *.o
+
+# scons
+build/
+.sconsign.dblite

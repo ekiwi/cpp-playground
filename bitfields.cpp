@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdint.h>
 
+#pragma GCC diagnostic ignored "-Woverflow"
+
 enum class Color : uint8_t
 {
 	Red = 0,

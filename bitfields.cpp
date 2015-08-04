@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdint.h>
+#include <bitset>
 
 #pragma GCC diagnostic ignored "-Woverflow"
 
@@ -23,7 +24,7 @@ inline std::ostream& operator<<(std::ostream & os, const Color & color) {
 	return os;
 }
 
-struct Fields
+struct __attribute__ ((__packed__)) Fields
 {
 	unsigned int a : 4;
 	signed   int b : 4;
@@ -31,6 +32,18 @@ struct Fields
 	int16_t      d : 4;
 	Color        color : 2;
 };
+
+struct __attribute__ ((__packed__)) Read3BitsStruct
+{
+	unsigned int other : 5;
+	unsigned int value : 3;
+};
+
+inline std::ostream& operator<<(std::ostream & os, const Fields & ff) {
+	os  << "(" << ff.a << ", " << ff.b << ", "
+	    << ff.c << ", " << ff.d << ", " << ff.color << ")" << std::endl;
+	return os;
+}
 
 #define TEST(value) \
 	value =  4; std::cout << #value " =  4; " #value ": " << value << std::endl; \
@@ -59,5 +72,16 @@ int main()
 	ff.color = Color::Green;
 	std::cout << "ff.color: " << ff.color << std::endl;
 	ff.color = Color::Black;
-	std::cout << "ff.color: " << ff.color << std::endl;
+	std::cout << "ff.color: " << ff.color << std::endl << std::endl;
+
+	std::cout << "bitfield to data mapping" << std::endl;
+	uint8_t data[3] = {3<<4,3,2};
+	Fields* f0 = reinterpret_cast<Fields*>(data);
+	std::cout << "f0: " << *f0 << std::endl;
+
+	uint8_t data1 = 0b11010000;
+	Read3BitsStruct* f1 = reinterpret_cast<Read3BitsStruct*>(&data1);
+	std::cout << "data1:     " << std::bitset<8>(data1)     << std::endl;
+	std::cout << "f1->value: " << std::bitset<3>(f1->value) << std::endl;
+	std::cout << "f1->other: " << std::bitset<5>(f1->other) << std::endl;
 }
